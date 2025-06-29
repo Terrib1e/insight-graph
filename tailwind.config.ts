@@ -66,10 +66,56 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        shimmer: {
+          "100%": {
+            transform: "translateX(100%)",
+          },
+        },
+        "pulse-scale": {
+          "0%, 100%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+          "50%": {
+            transform: "scale(1.05)",
+            opacity: "0.9",
+          },
+        },
+        "slide-in": {
+          from: {
+            transform: "translateY(100%)",
+            opacity: "0",
+          },
+          to: {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+        },
+        gradient: {
+          to: {
+            backgroundPosition: "200% center",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s linear infinite",
+        "pulse-scale": "pulse-scale 2s ease-in-out infinite",
+        "slide-in": "slide-in 0.5s ease-out",
+        gradient: "gradient 8s linear infinite",
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      boxShadow: {
+        "glow": "0 0 20px rgba(59, 130, 246, 0.5)",
+        "glow-lg": "0 0 30px rgba(59, 130, 246, 0.6)",
+        "inner-glow": "inset 0 0 20px rgba(59, 130, 246, 0.3)",
+      },
+      dropShadow: {
+        "glow": "0 0 10px rgba(59, 130, 246, 0.7)",
       },
     },
   },

@@ -121,32 +121,60 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated gradient mesh background */}
+      <div className="fixed inset-0 gradient-mesh opacity-30 animate-pulse-glow" />
+      
+      {/* Main gradient background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50" />
+      
+      {/* Floating orbs for visual interest */}
+      <div className="fixed top-20 left-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" />
+      <div className="fixed bottom-20 right-20 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{ animationDelay: '2s' }} />
+      <div className="fixed top-40 right-40 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{ animationDelay: '4s' }} />
+      
+      <div className="relative z-10 container mx-auto px-4 py-8 space-y-8">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="text-center space-y-4 animate-slide-up">
+          <h1 className="text-5xl md:text-6xl font-bold gradient-text animate-pulse-glow">
             InsightGraph
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
             Transform your curiosity into visual knowledge. Enter topics and watch as AI creates
             an interactive map of connected concepts, definitions, and learning resources.
           </p>
+          
+          {/* Stats badges */}
+          {concepts.length > 0 && (
+            <div className="flex justify-center gap-4 mt-6">
+              <div className="glass px-4 py-2 rounded-full transition-all-smooth hover:scale-105">
+                <span className="text-sm font-medium text-gray-700">{concepts.length} Concepts</span>
+              </div>
+              <div className="glass px-4 py-2 rounded-full transition-all-smooth hover:scale-105">
+                <span className="text-sm font-medium text-gray-700">{connections.length} Connections</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Topic Input */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="glass rounded-2xl p-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
           <TopicInput onGenerate={handleGenerateGraph} isLoading={isLoading} />
         </div>
 
         {/* Graph Canvas */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="glass rounded-2xl p-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           {isLoading ? (
             <div className="w-full h-[600px] flex items-center justify-center">
               <div className="text-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto" />
-                <div className="text-lg text-gray-600">Generating your knowledge graph...</div>
-                <div className="text-sm text-gray-500">This may take a few moments</div>
+                <div className="relative">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 mx-auto" />
+                  <div className="absolute inset-0 animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto" />
+                </div>
+                <div className="space-y-2">
+                  <div className="text-xl font-medium text-gray-800">Generating your knowledge graph...</div>
+                  <div className="text-sm text-gray-600">AI is analyzing concepts and building connections</div>
+                </div>
               </div>
             </div>
           ) : (
@@ -172,19 +200,12 @@ export default function Home() {
         />
 
         {/* Footer */}
-        <div className="text-center text-sm text-gray-500 space-y-2">
-          <p>
-            Powered by Google Gemini AI • Built with Next.js and React Flow
-          </p>
-          <p>
-            {concepts.length > 0 && (
-              <>Currently exploring {concepts.length} concepts with {connections.length} connections</>
-            )}
+        <div className="text-center space-y-2 py-8 animate-fade-in">
+          <p className="text-sm text-gray-600">
+            Powered by <span className="font-medium text-gray-800">Google Gemini AI</span> • Built with <span className="font-medium text-gray-800">Next.js</span> and <span className="font-medium text-gray-800">React Flow</span>
           </p>
         </div>
       </div>
-
-
     </div>
   );
 }

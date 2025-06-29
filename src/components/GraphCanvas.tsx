@@ -23,7 +23,7 @@ import 'reactflow/dist/style.css';
 import { RelatedConcept } from '@/lib/api';
 import { ConceptNode } from '@/components/ConceptNode';
 import { Button } from '@/components/ui/button';
-import { Download, Save, ZoomIn, ZoomOut } from 'lucide-react';
+import { Download, Save, FileText, Image, Maximize2 } from 'lucide-react';
 
 const nodeTypes: NodeTypes = {
   concept: ConceptNode,
@@ -70,8 +70,8 @@ function GraphCanvasInternal({
         id: concept.id,
         type: 'concept',
         position: {
-          x: col * 250 + 200 + jitterX,
-          y: row * 200 + 150 + jitterY,
+          x: col * 280 + 200 + jitterX,
+          y: row * 220 + 150 + jitterY,
         },
         data: {
           label: concept.label,
@@ -92,22 +92,24 @@ function GraphCanvasInternal({
       target: connection.target,
       label: connection.label,
       type: 'smoothstep',
-      animated: false, // Disable animation to reduce visual noise
+      animated: true,
       style: {
-        stroke: '#94a3b8',
-        strokeWidth: 1.5,
-        strokeOpacity: 0.6,
+        stroke: 'url(#edge-gradient)',
+        strokeWidth: 2,
+        strokeOpacity: 0.8,
       },
       labelStyle: {
         fill: '#64748b',
-        fontSize: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        padding: '2px 4px',
-        borderRadius: '4px',
+        fontSize: 11,
+        fontWeight: 500,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        padding: '3px 6px',
+        borderRadius: '6px',
+        border: '1px solid rgba(0, 0, 0, 0.05)',
       },
       labelBgStyle: {
         fill: 'white',
-        fillOpacity: 0.8,
+        fillOpacity: 0.9,
       },
     }));
   }, [connections]);
@@ -151,17 +153,32 @@ function GraphCanvasInternal({
 
   if (concepts.length === 0) {
     return (
-      <div className="w-full h-[600px] flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-        <div className="text-center space-y-2">
-          <div className="text-gray-400 text-lg">Your knowledge graph will appear here</div>
-          <div className="text-gray-500 text-sm">Enter topics above to generate your first graph</div>
+      <div className="w-full h-[600px] flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl border-2 border-dashed border-gray-300">
+        <div className="text-center space-y-3 animate-fade-in">
+          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+            <Maximize2 className="h-10 w-10 text-blue-600" />
+          </div>
+          <div className="space-y-2">
+            <div className="text-gray-700 text-lg font-medium">Your knowledge graph will appear here</div>
+            <div className="text-gray-500 text-sm">Enter topics above to generate your first graph</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-[600px] border rounded-lg overflow-hidden" ref={reactFlowRef}>
+    <div className="w-full h-[600px] rounded-2xl overflow-hidden shadow-inner" ref={reactFlowRef}>
+      {/* Edge gradient definition */}
+      <svg width="0" height="0">
+        <defs>
+          <linearGradient id="edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#3b82f6" />
+            <stop offset="100%" stopColor="#8b5cf6" />
+          </linearGradient>
+        </defs>
+      </svg>
+      
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -171,28 +188,28 @@ function GraphCanvasInternal({
         nodeTypes={nodeTypes}
         fitView
         attributionPosition="bottom-left"
-        className="bg-gradient-to-br from-slate-50 to-blue-50"
+        className="bg-gradient-to-br from-slate-50/50 to-blue-50/50"
       >
         <Controls
-          className="bg-white shadow-lg border"
+          className="bg-white/90 backdrop-blur-sm shadow-lg border border-gray-200/50 rounded-lg overflow-hidden"
           showZoom={true}
           showFitView={true}
           showInteractive={true}
         />
 
         <MiniMap
-          className="bg-white shadow-lg border"
-          nodeColor="#3b82f6"
-          maskColor="rgba(0, 0, 0, 0.1)"
+          className="bg-white/90 backdrop-blur-sm shadow-lg border border-gray-200/50 rounded-lg"
+          nodeColor={(node) => node.selected ? '#3b82f6' : '#e5e7eb'}
+          maskColor="rgba(0, 0, 0, 0.05)"
           position="top-right"
         />
 
         <Background
           variant={BackgroundVariant.Dots}
-          gap={24}
-          size={0.8}
-          color="#e2e8f0"
-          className="opacity-60"
+          gap={20}
+          size={1}
+          color="#e5e7eb"
+          className="opacity-50"
         />
 
         <Panel position="top-left" className="space-x-2 flex flex-wrap gap-2">
@@ -200,35 +217,44 @@ function GraphCanvasInternal({
             variant="outline"
             size="sm"
             onClick={onExportMarkdown}
-            className="bg-white shadow-sm hover:bg-blue-50"
+            className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-blue-50/90 border-gray-200/50 transition-all-smooth"
           >
-            <Download className="h-4 w-4 mr-1" />
-            Markdown
+            <FileText className="h-4 w-4 mr-1.5" />
+            Export as Markdown
           </Button>
 
           <Button
             variant="outline"
             size="sm"
             onClick={handleExportPNG}
-            className="bg-white shadow-sm hover:bg-blue-50"
+            className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-purple-50/90 border-gray-200/50 transition-all-smooth"
           >
-            <Download className="h-4 w-4 mr-1" />
-            PNG
+            <Image className="h-4 w-4 mr-1.5" />
+            Export as Image
           </Button>
 
           <Button
             variant="outline"
             size="sm"
             onClick={onSave}
-            className="bg-white shadow-sm hover:bg-blue-50"
+            className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-green-50/90 border-gray-200/50 transition-all-smooth"
           >
-            <Save className="h-4 w-4 mr-1" />
-            Save
+            <Save className="h-4 w-4 mr-1.5" />
+            Save Graph
           </Button>
         </Panel>
 
-        <Panel position="bottom-right" className="text-xs text-gray-500 bg-white px-2 py-1 rounded shadow-sm">
-          {concepts.length} concepts • {connections.length} connections
+        <Panel position="bottom-right" className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm border border-gray-200/50">
+          <div className="flex items-center gap-4 text-xs text-gray-600">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+              <span>{concepts.length} concepts</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+              <span>{connections.length} connections</span>
+            </div>
+          </div>
         </Panel>
       </ReactFlow>
     </div>
